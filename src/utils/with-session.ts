@@ -3,6 +3,7 @@ import {Session} from '../auth/session';
 import {GraphqlClient} from '../clients/graphql';
 import {RestClient} from '../clients/rest';
 import {Context} from '../context';
+import {ApiClientType} from '../clients/types';
 
 import {WithSessionParams, WithSessionResponse} from './types';
 import loadOfflineSession from './load-offline-session';
@@ -14,6 +15,7 @@ export default async function withSession({
   req,
   res,
   shop,
+  apiType = ApiClientType.Admin,
 }: WithSessionParams): Promise<WithSessionResponse> {
   Context.throwIfUninitialized();
 
@@ -41,13 +43,21 @@ export default async function withSession({
   let client: RestClient | GraphqlClient;
   switch (clientType) {
     case 'rest':
-      client = new RestClient(session.shop, session.accessToken);
+      client = new RestClient({
+        apiType,
+        domain: session.shop,
+        accessToken: session.accessToken,
+      });
       return {
         client,
         session,
       };
     case 'graphql':
-      client = new GraphqlClient(session.shop, session.accessToken);
+      client = new GraphqlClient({
+        apiType,
+        domain: session.shop,
+        accessToken: session.accessToken,
+      });
       return {
         client,
         session,

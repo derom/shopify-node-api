@@ -3,6 +3,7 @@ import http from 'http';
 
 import {StatusCode} from '@shopify/network';
 
+import {ApiClientType} from '../clients/types';
 import {GraphqlClient} from '../clients/graphql/graphql_client';
 import {ShopifyHeader} from '../base_types';
 import ShopifyUtilities from '../utils';
@@ -143,7 +144,11 @@ const WebhooksRegistry: RegistryInterface = {
     deliveryMethod = DeliveryMethod.Http,
     webhookHandler,
   }: RegisterOptions): Promise<RegisterReturn> {
-    const client = new GraphqlClient(shop, accessToken);
+    const client = new GraphqlClient({
+      apiType: ApiClientType.Admin,
+      domain: shop,
+      accessToken,
+    });
     const address = `https://${Context.HOST_NAME}${path}`;
 
     const checkResult = await client.query({

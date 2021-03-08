@@ -1,5 +1,6 @@
 import http from 'http';
 
+import {ApiClientType} from '../clients/types';
 import {Session} from '../auth/session';
 import {GraphqlClient} from '../clients/graphql';
 import {RestClient} from '../clients/rest';
@@ -10,6 +11,7 @@ export interface WithSessionParams {
   req?: http.IncomingMessage;
   res?: http.ServerResponse;
   shop?: string;
+  apiType?: ApiClientType;
 }
 
 interface WithSessionBaseResponse {

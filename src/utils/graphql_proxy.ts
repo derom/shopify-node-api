@@ -1,5 +1,6 @@
 import http from 'http';
 
+import {ApiClientType} from '../clients/types';
 import {GraphqlClient} from '../clients/graphql';
 import * as ShopifyErrors from '../error';
 
@@ -38,7 +39,11 @@ export default async function graphqlProxy(userReq: http.IncomingMessage, userRe
         const options = {
           data: reqBodyObject ? reqBodyObject : reqBodyString,
         };
-        const client = new GraphqlClient(shopName, token);
+        const client = new GraphqlClient({
+          apiType: ApiClientType.Admin,
+          domain: shopName,
+          accessToken: token,
+        });
         const response = await client.query(options);
         body = response.body;
       } catch (err) {

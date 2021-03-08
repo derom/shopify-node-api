@@ -3,6 +3,17 @@ import {Headers} from 'node-fetch';
 
 export type HeaderParams = Record<string, string | number>;
 
+export enum ApiClientType {
+  Admin = 'admin',
+  Storefront = 'storefront',
+}
+
+export interface ApiClientParams {
+  apiType?: ApiClientType;
+  domain: string;
+  accessToken?: string;
+}
+
 export enum DataType {
   JSON = 'application/json', // eslint-disable-line @shopify/typescript/prefer-pascal-case-enums
   GraphQL = 'application/graphql', // eslint-disable-line @shopify/typescript/prefer-pascal-case-enums

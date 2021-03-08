@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+**Note**: When we next release a major version for this library, we should remove the code for backward compatibility from the REST and GraphQL client constructors.
+
+- Refactored the constructors `Shopify.Clients.Rest` and `Shopify.Clients.Graphql` so they allow querying multiple APIs
 
 ## [1.1.0] - 2021-03-02
 - Minor text/doc changes

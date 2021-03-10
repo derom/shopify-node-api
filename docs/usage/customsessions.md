@@ -1,29 +1,36 @@
-# Create a `CustomSessionStorage` Solution
+# Create a `CustomSessionStorage` solution
 
 This library comes with two session management options: `MemorySessionStorage` and `CustomSessionStorage`.
 
-`MemorySessionStorage` exists as an option to help you get started developing your apps as quickly as possible, and is the default storage option on `Shopify.Context`. It's perfect for working in your development and testing environments. However, this storage solution is not meant to be used in production due to its limitations.
+`MemorySessionStorage` exists as an option to help you get started developing your apps as quickly as possible, and is the default storage option on `Shopify.Context`. It's perfect for working in your development and testing environments. However, this storage solution is not meant to be used in production [due to its limitations](../issues.md).
 
 When you're ready to deploy your app and run it in production, you'll need to set up a `CustomSessionStorage`, which you can then use in initializing your `Shopify.Context`. The `CustomSessionStorage` class expects to be initialized with three callbacks that link to your chosen storage solution and map to the `storeSession`, `loadSession`, and `deleteSession` methods on the class.
 
-## Callback Methods
+## Callback methods
 
 - All of the callbacks used to create a new instance of `CustomSessionStorage` should be `async` functions and return a `Promise` that resolves to a specified type, as outlined below.
 
-| Method           | Arg Type  | Return Type                                                 | Notes                                                                                                                                                                                                                |
-| ---------------- | --------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `storeCallback`  | `Session` | `Promise<boolean>`                                           | Takes in the `Session` to be stored, returns a `boolean` (`true` if stored successfully).                                                                                                                            |
+| Method | Arg type | Return type  | Notes  |
+| ------- | ------- | ------------ | -------|
+| `storeCallback`  | `Session` | `Promise<boolean>` | Takes in the `Session` to be stored, returns a `boolean` (`true` if stored successfully).                                                                                                                            |
 | `loadCallback`   | `string`  | `Promise<Session \| Record<string, unknown> \| undefined> ` | Takes in the id of the `Session` to load (as a `string`) and returns either an instance of a `Session`, an object to be used to instantiate a `Session`, or `undefined` if no record is found for the specified id. |
-| `deleteCallback` | `string`  | `Promise<boolean>`                                           | Takes in the id of the `Session` to load (as a `string`) and returns a  `booelan` (`true` if deleted successfully).                                                                                                  |
+| `deleteCallback` | `string`  | `Promise<boolean>` | Takes in the id of the `Session` to load (as a `string`) and returns a  `booelan` (`true` if deleted successfully). |
 
-## Example Usage
+## Example usage
 
 This is an example implementation of a `CustomSessionStorage` solution, using `redis` for storage.
 
-### Dependencies
-Before starting this tutorial, please first follow our [Getting Started Guide](../getting_started.md).
-Once completed, you will need to add the `redis` package to your project by running:
-`$ yarn add redis`
+Before starting this tutorial, please first follow our [getting started guide](../getting_started.md).
+### Install `redis` dependencies
+
+First, make sure you have Redis installed on your machine. You can follow their [Quick Start guide](https://redis.io/topics/quickstart) to get up and running, and then come back here to continue with this example.
+
+_(**Tip**: Mac users should be able to just run `brew install redis` to install redis using homebrew)_
+
+Once you have Redis installed globally, you will need to add the `redis` client to your project by running:
+```shell
+$ yarn add redis
+```
 
 ### Create a RedisStore class
 
@@ -113,7 +120,6 @@ Now we can import our custom storage class into our `index.ts` and use it to set
 /* index.ts */
 
 import Shopify, {ApiVersion, AuthQuery} from '@shopify/shopify-api/dist';
-import {CustomSessionStorage} from '@shopify/shopify-api/dist/auth/session';
 // Import our custom storage class
 import RedisStore from './redis-store';
 
@@ -133,7 +139,7 @@ Shopify.Context.initialize({
   IS_EMBEDDED_APP: true,
   API_VERSION: ApiVersion.unstable,
   // Pass the sessionStorage methods to pass into a new instance of `CustomSessionStorage`
-  SESSION_STORAGE: new CustomSessionStorage(
+  SESSION_STORAGE: new Shopify.Session.CustomSessionStorage(
     sessionStorage.storeCallback,
     sessionStorage.loadCallback,
     sessionStorage.deleteCallback,
@@ -143,3 +149,9 @@ Shopify.Context.initialize({
 // Your app will now use your new storage solution to access and manage Sessions
 
 ```
+
+At this point, you should have a working `CustomSessionStorage` solution that will work seamlessly with this library in your Shopify application.
+
+**Note:** This is only one possible `CustomSessionStorage` solution. As long as your callback methods fit the requirements for argument types and return types, you can use any storage solution or database you're comfortable and/or familiar with.
+
+[Back to guide index](index.md)
